@@ -1,0 +1,84 @@
+#include <iostream>
+#include <list>
+using namespace std;
+
+// Define the size of the hash table
+const int TABLE_SIZE = 10;
+
+// Node structure for the linked list
+struct Node {
+    int key;
+    Node* next;
+
+    Node(int k) : key(k), next(nullptr) {}
+};
+
+class HashTable {
+private:
+    // Array of pointers to linked lists
+    Node* table[TABLE_SIZE];
+
+    // Hash function
+    int hashFunction(int key) {
+        return key % TABLE_SIZE;
+    }
+
+public:
+    HashTable() {
+        for (int i = 0; i < TABLE_SIZE; ++i) {
+            table[i] = nullptr;
+        }
+    }
+
+    // Insert a key into the hash table
+    void insert(int key) {
+        int index = hashFunction(key);
+        Node* newNode = new Node(key);
+
+        // Insert at the beginning of the linked list
+        newNode->next = table[index];
+        table[index] = newNode;
+    }
+
+    // Display the hash table
+    void display() {
+        for (int i = 0; i < TABLE_SIZE; ++i) {
+            cout << "Index " << i << ": ";
+            Node* current = table[i];
+            while (current) {
+                cout << current->key << " -> ";
+                current = current->next;
+            }
+            cout << "NULL" << endl;
+        }
+    }
+
+    // Destructor to clean up memory
+    ~HashTable() {
+        for (int i = 0; i < TABLE_SIZE; ++i) {
+            Node* current = table[i];
+            while (current) {
+                Node* temp = current;
+                current = current->next;
+                delete temp;
+            }
+        }
+    }
+};
+
+int main() {
+    HashTable hashTable;
+
+    // Insert some keys into the hash table
+    hashTable.insert(15);
+    hashTable.insert(25);
+    hashTable.insert(35);
+    hashTable.insert(20);
+    hashTable.insert(30);
+    hashTable.insert(40);
+
+    // Display the hash table
+    hashTable.display();
+
+    return 0;
+}

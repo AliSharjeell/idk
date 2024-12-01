@@ -1,0 +1,87 @@
+#include <iostream>
+using namespace std;
+
+class HashTable {
+private:
+    int *table;
+    int size;
+    int EMPTY = -1;
+    int DELETED = -2;
+
+public:
+    HashTable(int tableSize) {
+        size = tableSize;
+        table = new int[size];
+        for (int i = 0; i < size; ++i) {
+            table[i] = EMPTY;
+        }
+    }
+
+    ~HashTable() {
+        delete[] table;
+    }
+
+    int hashFunction(int key) {
+        return key % size;
+    }
+
+    bool insert(int key) {
+        int index = hashFunction(key);
+        int i = 0;
+
+        while (i < size) {
+            int newIndex = (index + i * i) % size;
+
+            // Check if the slot is empty or marked as deleted
+            if (table[newIndex] == EMPTY || table[newIndex] == DELETED) {
+                table[newIndex] = key;
+                return true;
+            }
+
+            // Slot is occupied, try next quadratic probe
+            i++;
+        }
+
+        // If we reach here, the table is full
+        return false;
+    }
+
+    void display() {
+        for (int i = 0; i < size; ++i) {
+            if (table[i] == EMPTY) {
+                cout << "_ ";
+            } else if (table[i] == DELETED) {
+                cout << "D ";
+            } else {
+                cout << table[i] << " ";
+            }
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    int tableSize;
+    cout << "Enter size of the hash table: ";
+    cin >> tableSize;
+
+    HashTable hashTable(tableSize);
+
+    int n;
+    cout << "Enter number of elements to insert: ";
+    cin >> n;
+
+    cout << "Enter the elements: \n";
+    for (int i = 0; i < n; ++i) {
+        int key;
+        cin >> key;
+        if (!hashTable.insert(key)) {
+            cout << "HashTable is full! Could not insert " << key << ".\n";
+        }
+    }
+
+    cout << "HashTable: \n";
+    hashTable.display();
+
+    return 0;
+}
